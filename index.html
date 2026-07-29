@@ -1,0 +1,547 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="mobile-web-app-capable" content="yes">
+<title>مسیر آزاد</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<script src="https://unpkg.com/peerjs@1.5.4/dist/peerjs.min.js"></script>
+</head>
+<body>
+
+<div class="start-screen" id="startScreen">
+  <div class="start-card">
+    <div class="logo-wrap">
+      <svg class="crown-icon" viewBox="0 0 100 60" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <linearGradient id="crownGold" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#fff3cf"/>
+            <stop offset="45%" stop-color="#e0a458"/>
+            <stop offset="100%" stop-color="#9a6a2c"/>
+          </linearGradient>
+        </defs>
+        <path d="M6 50 L2 20 L22 34 L34 8 L50 30 L66 8 L78 34 L98 20 L94 50 Z" fill="url(#crownGold)" stroke="#6b4324" stroke-width="1.5" stroke-linejoin="round"/>
+        <rect x="6" y="50" width="88" height="8" rx="2" fill="url(#crownGold)" stroke="#6b4324" stroke-width="1.5"/>
+        <circle cx="34" cy="8" r="5" fill="#f3c98a" stroke="#6b4324" stroke-width="1.5"/>
+        <circle cx="50" cy="16" r="4.5" fill="#e0685a" stroke="#6b4324" stroke-width="1.5"/>
+        <circle cx="66" cy="8" r="5" fill="#f3c98a" stroke="#6b4324" stroke-width="1.5"/>
+      </svg>
+      <div class="start-title">مسیرِ آزاد</div>
+      <div class="logo-rule"></div>
+    </div>
+    <div class="start-subtitle">اول کسی که به آن‌ور برسه برنده‌ست • آیتم جمع کن، حریف رو غافلگیر کن!</div>
+    <div class="start-top-row">
+      <button class="icon-btn sound-btn" id="soundBtnStart">🔊</button>
+      <div class="start-coin-row">
+        <button class="coin-pill" id="coinPillStart">🪙 <span id="coinBalStart">۰</span></button>
+        <button class="coin-add-btn" id="coinAddBtnStart">+</button>
+      </div>
+    </div>
+
+    <div class="setup-players">
+      <div class="setup-player">
+        <div class="setup-row">
+          <div class="avatar-circle dot sm" id="setupDot1"><span class="avatar-initial" id="setupInitial1">۱</span><span class="avatar-edit">✎</span></div>
+          <input class="setup-name" id="setupName1" maxlength="10" value="بازیکن ۱">
+        </div>
+        <div class="swatches" id="swatches1"></div>
+      </div>
+      <div class="setup-vs">در برابرِ</div>
+      <div class="setup-player">
+        <div class="setup-row">
+          <div class="avatar-circle dot sm" id="setupDot2"><span class="avatar-initial" id="setupInitial2">۲</span><span class="avatar-edit">✎</span></div>
+          <input class="setup-name" id="setupName2" maxlength="10" value="بازیکن ۲">
+        </div>
+        <div class="swatches" id="swatches2"></div>
+      </div>
+    </div>
+
+    <label class="toggle-row" for="suddenDeathToggle">
+      <span>⚡ حالتِ مرگِ ناگهانی<small>بعدِ ۲ دقیقه، وقتِ هر نوبت میره رو ۱۰ ثانیه</small></span>
+      <input type="checkbox" id="suddenDeathToggle">
+    </label>
+
+    <label class="toggle-row" for="aiToggle">
+      <span>🤖 بازی با هوش مصنوعی<small>به‌جای بازیکنِ ۲، با ربات بازی کن</small></span>
+      <input type="checkbox" id="aiToggle">
+    </label>
+    <div class="ai-diff-row hidden" id="aiDiffRow">
+      <button class="diff-btn" data-diff="easy">😌 آسون</button>
+      <button class="diff-btn on" data-diff="medium">🙂 متوسط</button>
+      <button class="diff-btn" data-diff="hard">🔥 سخت</button>
+    </div>
+
+    <button class="mechanics-toggle-btn" id="mechanicsToggleBtn">✨ حالت‌های ویژه <span id="mechanicsCountBadge" class="mechanics-count hidden">۰</span> <span class="mechanics-chevron" id="mechanicsChevron">▾</span></button>
+    <div class="mechanics-panel hidden" id="mechanicsPanel">
+      <label class="toggle-row" for="iceToggle">
+        <span>❄️ زمینِ یخی<small>روی خانه‌های یخی می‌سُری تا وقتی به مانع یا لبه برسی</small></span>
+        <input type="checkbox" id="iceToggle">
+      </label>
+      <label class="toggle-row" for="portalToggle">
+        <span>🌀 تله‌پورت<small>دو جفت پرتال روی تخته؛ رویِ یکی وایسا، از اون یکی سر در میاری</small></span>
+        <input type="checkbox" id="portalToggle">
+      </label>
+      <label class="toggle-row" for="fragileToggle">
+        <span>🧊 دیوارِ شکننده<small>هر چوب بعدِ چند نوبت ترک می‌خوره و خودش می‌شکنه</small></span>
+        <input type="checkbox" id="fragileToggle">
+      </label>
+      <label class="toggle-row" for="fogToggle">
+        <span>🌫 مه‌آلود<small>فقط اطرافِ خودت رو واضح می‌بینی؛ بقیه‌ی تخته توی مه‌ست</small></span>
+        <input type="checkbox" id="fogToggle">
+      </label>
+    </div>
+
+    <button class="primary" id="startGameBtn">🎮 شروعِ بازی</button>
+    <button class="secondary c-green" id="startOnlineBtn">🌐 بازی آنلاین</button>
+    <div class="start-row-2">
+      <button class="secondary c-purple" id="shopBtnStart">🛍 فروشگاه</button>
+      <button class="secondary c-blue" id="startProfileBtn">📊 پروفایل</button>
+    </div>
+    <button class="secondary" id="tournamentBtn">🏆 تورنومنتِ ۴ نفره</button>
+    <button class="secondary" id="dailyBtn">🏆 چالشِ روزانه</button>
+    <button class="secondary" id="puzzleBtn">🧩 پازل‌های چیده‌شده</button>
+    <div class="start-icon-row">
+      <button class="secondary ghost-icon" id="tutorialBtn">🎓 آموزش<span class="badge-new hidden" id="tutorialNewBadge">جدید</span></button>
+      <button class="secondary ghost-icon" id="startRulesBtn">؟ قوانین</button>
+    </div>
+  </div>
+</div>
+
+<div id="app" class="hidden">
+  <div class="title-row">
+    <div class="title">مسیرِ آزاد</div>
+    <div style="display:flex; align-items:center; gap:6px;">
+      <span class="sd-badge hidden" id="sdBadge">⚡ مرگِ ناگهانی</span>
+      <button class="coin-pill" id="coinPillApp">🪙 <span id="coinBalApp">۰</span></button>
+      <button class="coin-add-btn" id="coinAddBtnApp">+</button>
+      <button class="reaction-btn" id="tBracketBtn">🏆</button>
+      <button class="reaction-btn" id="reactionBtn">😄</button>
+      <button class="icon-btn sound-btn" id="soundBtnApp">🔊</button>
+      <button class="online-pill" id="onlineBtn">🌐 آنلاین</button>
+    </div>
+  </div>
+  <div class="reaction-picker" id="reactionPicker"></div>
+  <div class="subtitle">اول کسی که به آن‌ور برسه برنده‌ست • آیتم جمع کن، حریف رو غافلگیر کن!</div>
+  <div class="score-bar hidden" id="scoreBar"></div>
+
+  <div class="room-badge" id="roomBadge">
+    <span id="roomBadgeText">روم: ------</span>
+    <button id="leaveRoomBtn">ترک روم</button>
+  </div>
+
+  <div class="puzzle-bar" id="puzzleBar">
+    <div class="puzzle-bar-name" id="puzzleBarName">🧩 پازل</div>
+    <div class="puzzle-bar-stats">🚶 <span id="puzzleBarMoves">۰</span> حرکت · 🎯 هدف: <span id="puzzleBarPar">—</span></div>
+    <button class="puzzle-bar-list-btn" id="puzzleBarListBtn">📋 فهرست</button>
+  </div>
+
+  <div class="hud" id="hudRow">
+    <div class="player-card p1" id="card1" style="--turn-color:var(--amber)">
+      <div class="avatar-circle dot" id="hudAvatar1"><span class="avatar-initial">۱</span></div>
+      <div class="p-info">
+        <input class="p-name" id="name1" maxlength="10" value="بازیکن ۱">
+        <div class="p-rating hidden" id="rating1">🏅 —</div>
+        <div class="sticks" id="sticks1"></div>
+      </div>
+    </div>
+    <div class="turn-timer-circle" id="turnTimerCircle" style="--ring-color:var(--amber)">
+      <span id="turnTimerText">۰۰:۲۵</span>
+    </div>
+    <div class="player-card p2" id="card2" style="--turn-color:var(--teal)">
+      <div class="avatar-circle dot" id="hudAvatar2"><span class="avatar-initial">۲</span></div>
+      <div class="p-info">
+        <input class="p-name" id="name2" maxlength="10" value="بازیکن ۲">
+        <div class="p-rating hidden" id="rating2">🏅 —</div>
+        <div class="sticks" id="sticks2"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="board-wrap" id="boardWrap">
+    <canvas id="board"></canvas>
+    <div class="toast" id="toast"></div>
+    <div class="turn-alert" id="turnAlert">🎯 نوبتِ توئه!</div>
+    <div class="t-spectate-banner hidden" id="tSpectateBanner">👀 داری تماشا می‌کنی</div>
+  </div>
+
+  <div class="controls">
+    <button class="icon-btn" id="homeBtn">🏠</button>
+    <button class="icon-btn hint-btn" id="hintBtn">💡<span class="mode-badge" id="hintCostBadge">۵</span></button>
+    <button class="mode-btn" id="moveModeBtn">🔵 حرکت</button>
+    <button class="mode-btn" id="wallModeBtn">🪵 چوب</button>
+    <button class="mode-btn breaker-btn" id="breakModeBtn">💥 خیبرشکن<span class="mode-badge" id="breakBadge">۱</span></button>
+    <button class="icon-btn" id="restartBtn">⟲</button>
+  </div>
+</div>
+
+<div class="overlay" id="winOverlay">
+  <div class="panel">
+    <svg class="win-trophy" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <linearGradient id="trophyGold" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#fff3cf"/>
+          <stop offset="50%" stop-color="#e0a458"/>
+          <stop offset="100%" stop-color="#9a6a2c"/>
+        </linearGradient>
+      </defs>
+      <path d="M30 18 H70 V38 C70 52 60 60 50 60 C40 60 30 52 30 38 Z" fill="url(#trophyGold)" stroke="#6b4324" stroke-width="2"/>
+      <path d="M30 22 C18 22 14 32 20 40 C24 45 29 46 32 45" fill="none" stroke="url(#trophyGold)" stroke-width="4" stroke-linecap="round"/>
+      <path d="M70 22 C82 22 86 32 80 40 C76 45 71 46 68 45" fill="none" stroke="url(#trophyGold)" stroke-width="4" stroke-linecap="round"/>
+      <rect x="45" y="59" width="10" height="12" fill="url(#trophyGold)"/>
+      <path d="M34 71 H66 L70 82 H30 Z" fill="url(#trophyGold)" stroke="#6b4324" stroke-width="2"/>
+      <circle cx="50" cy="37" r="9" fill="none" stroke="#fff3cf" stroke-width="2" opacity=".7"/>
+      <path d="M50 30 L52 35 L57 35 L53 38 L55 43 L50 40 L45 43 L47 38 L43 35 L48 35 Z" fill="#fff3cf"/>
+    </svg>
+    <div class="win-flag-banner" id="winFlagBanner"><span id="winTitle">بازیکن ۱ برنده شد!</span></div>
+    <div class="win-confetti-static" aria-hidden="true"></div>
+    <div class="winner-chip" id="winnerChip">
+      <div class="win-dot" id="winDot"></div>
+      <div class="winner-chip-name" id="winnerChipName">—</div>
+      <div class="winner-chip-bonus hidden" id="winnerChipBonus">🪙 +۰</div>
+    </div>
+    <p id="winSubtitle">یک بازی دیگه بازی می‌کنی؟</p>
+    <div class="game-stat-row" id="gameResultBox">
+      <div class="gs-tile"><div class="gs-val" id="gsTime">۰۰:۰۰</div><div class="gs-lbl">زمانِ بازی</div></div>
+      <div class="gs-tile"><div class="gs-val" id="gsMoves">۰</div><div class="gs-lbl">تعدادِ حرکت</div></div>
+      <div class="gs-tile"><div class="gs-val" id="gsWalls">۰</div><div class="gs-lbl">چوبِ استفاده‌شده</div></div>
+    </div>
+    <div class="daily-result hidden" id="dailyResultBox">
+      <div class="daily-result-row"><span>⭐ امتیاز</span><b id="dailyResultStars">—</b></div>
+      <div class="daily-result-row"><span>⏱ زمانِ تو</span><b id="dailyResultTime">—</b></div>
+      <div class="daily-result-row"><span>🚶 تعدادِ حرکت</span><b id="dailyResultMoves">—</b></div>
+      <div class="daily-result-row"><span>🏆 بهترین زمانِ تو</span><b id="dailyResultBest">—</b></div>
+      <div class="daily-result-row"><span>🔥 استریک</span><b id="dailyResultStreak">—</b></div>
+    </div>
+    <div class="daily-result hidden" id="tMatchResultBox">
+      <div class="daily-result-row"><span>دور</span><b id="tMatchRoundLabel">—</b></div>
+      <div class="daily-result-row"><span>وضعیت</span><b id="tMatchStatusLabel">—</b></div>
+    </div>
+    <div class="daily-result hidden" id="rankResultBox">
+      <div class="daily-result-row"><span id="rankResultTierIcon">🌱</span><b id="rankResultTier">تازه‌کار</b></div>
+      <div class="daily-result-row"><span>🏅 امتیازِ رتبه</span><b id="rankResultRating">۱۰۰۰</b></div>
+      <div class="daily-result-row"><span>تغییرِ این بازی</span><b id="rankResultDelta">+۰</b></div>
+    </div>
+    <div class="daily-result hidden" id="puzzleResultBox">
+      <div class="daily-result-row"><span>⭐ امتیاز</span><b id="puzzleResultStars">—</b></div>
+      <div class="daily-result-row"><span>🚶 حرکت‌های تو</span><b id="puzzleResultMoves">—</b></div>
+      <div class="daily-result-row"><span>🎯 حرکتِ بهینه</span><b id="puzzleResultPar">—</b></div>
+      <div class="daily-result-row"><span>🏆 رکوردِ تو</span><b id="puzzleResultBest">—</b></div>
+    </div>
+    <button class="primary hidden" id="tNextMatchBtn">▶️ ادامه به بازیِ بعدی</button>
+    <button class="primary hidden" id="puzzleNextBtn">▶️ پازلِ بعدی</button>
+    <button class="secondary hidden" id="puzzleListBtn2">📋 فهرستِ پازل‌ها</button>
+    <div class="win-btn-row" id="winBtnRow">
+      <button class="wbtn wbtn-exit" id="winExitBtn">🚪<span>خروج</span></button>
+      <button class="wbtn wbtn-again primary" id="playAgainBtn">🔁<span>دوباره بازی</span></button>
+      <button class="wbtn wbtn-share" id="shareResultBtn">🔗<span>اشتراک‌گذاری</span></button>
+    </div>
+  </div>
+</div>
+
+<div class="overlay" id="rulesOverlay">
+  <div class="panel">
+    <button class="close-x" id="closeRules">✕</button>
+    <h2>قوانین بازی</h2>
+    <ul class="rules-list">
+      <li>بازیکنِ ۱ از بالا شروع می‌کنه و باید به پایین برسه؛ بازیکنِ ۲ از پایین شروع می‌کنه و باید به بالا برسه.</li>
+      <li>هر نوبت یا یک خانه حرکت کن، یا یک چوب بذار.</li>
+      <li>هر بازیکن ۱۵ تا چوب داره.</li>
+      <li>چوب راهِ بین دو خانه رو می‌بنده.</li>
+      <li>هیچ‌وقت نمی‌تونی راهِ رفتنِ حریف رو کاملاً ببندی.</li>
+      <li>روی خانه‌ی کنارِ دایره‌ات بزن تا حرکت کنی.</li>
+      <li>حالتِ چوب رو روشن کن و روی خط بین دو خانه بزن.</li>
+      <li>هر نوبت ۲۵ ثانیه وقت داری؛ اگه تموم بشه، یه حرکتِ تصادفی خودکار انجام میشه!</li>
+      <li>🪵 آیتمِ چوب: ۲ چوبِ اضافه میده.</li>
+      <li>⚡ آیتمِ برق: یه حرکتِ اضافه، بدون از دست دادنِ نوبت.</li>
+      <li>🛡 آیتمِ سپر: دیوارِ بعدیِ حریف رو بی‌اثر می‌کنه.</li>
+      <li>❄️ آیتمِ یخ: نوبتِ بعدیِ حریف رو می‌پرونه.</li>
+      <li>👁 آیتمِ دیدِ حریف: چند ثانیه چوب‌های حریف رو محو می‌کنه تا راهِ خودت رو بهتر ببینی.</li>
+      <li>🌀 آیتمِ جهش: دو خونه به سمتِ هدفت می‌پری.</li>
+      <li>🔨 آیتمِ چکش: یه خیبرشکنِ اضافه بهت میده.</li>
+      <li>🔄 آیتمِ جابجایی: جای تو و حریف عوض میشه!</li>
+      <li>💰 آیتمِ دزدی: یه چوب از حریف می‌دزدی.</li>
+      <li>🎁 آیتمِ جعبه‌شانس: یکی از آیتم‌ها رو به‌طورِ تصادفی بهت میده.</li>
+      <li>روی خانه‌ای که آیتم داره وایسا تا بگیریش.</li>
+      <li>💥 خیبرشکن: هر بازیکن فقط یه‌بار می‌تونه یه چوبِ رو‌به‌رو رو (مالِ خودش یا حریف) کاملاً از بین ببره.</li>
+      <li>⚡ اگه حالتِ مرگِ ناگهانی روشن باشه، بعدِ ۲ دقیقه از شروعِ بازی، وقتِ هر نوبت کوتاه‌تر میشه.</li>
+    </ul>
+    <button class="primary" id="closeRules2">فهمیدم</button>
+  </div>
+</div>
+
+<div class="overlay" id="tutorialOverlay">
+  <div class="panel">
+    <button class="close-x" id="closeTutorial">✕</button>
+    <div class="tut-progress" id="tutProgress"></div>
+    <h2 id="tutStepTitle">خوش‌آمدی!</h2>
+    <div class="tut-board hidden" id="tutBoard"><div class="tut-grid" id="tutGrid"></div></div>
+    <div class="tut-items-grid hidden" id="tutItemsGrid"></div>
+    <div class="tut-text" id="tutStepText">—</div>
+    <div class="tut-nav">
+      <button class="secondary" id="tutPrevBtn">قبلی</button>
+      <button class="primary" id="tutNextBtn">بعدی</button>
+    </div>
+    <button class="tut-skip" id="tutSkipBtn">ردِ آموزش</button>
+  </div>
+</div>
+
+<div class="overlay" id="profileOverlay">
+  <div class="panel">
+    <button class="close-x" id="closeProfile">✕</button>
+    <h2>📊 پروفایل و دستاوردها</h2>
+    <div class="rank-card" id="rankCard">
+      <div class="avatar-circle lg" id="profileAvatar"><span class="avatar-initial" id="profileInitial">۱</span><span class="avatar-edit lg-edit">✎</span></div>
+      <div class="rank-info">
+        <div class="rank-name" id="profileNameDisplay">بازیکن ۱</div>
+        <div class="rank-tier-row">
+          <span class="rank-tier" id="rankTierName">تازه‌کار</span>
+        </div>
+        <div class="xp-bar"><div class="xp-fill" id="profileXpFill" style="width:0%"></div></div>
+        <div class="rank-rating"><b id="rankRatingNum">۱۰۰۰</b> امتیازِ رتبه (آنلاین)</div>
+      </div>
+      <span class="rank-icon-badge lg-badge" id="rankIcon">🌱</span>
+    </div>
+    <div class="section-label">📊 آمار کلی</div>
+    <div class="stat-grid" id="statGrid">
+      <div class="stat-tile"><div class="num" id="statGames">۰</div><div class="lbl">بازی‌ها</div></div>
+      <div class="stat-tile"><div class="num" id="statWins">۰</div><div class="lbl">برد‌ها</div></div>
+      <div class="stat-tile"><div class="num" id="statMostWalls">۰</div><div class="lbl">بیشترین چوب</div></div>
+      <div class="stat-tile"><div class="num" id="statFastest">—</div><div class="lbl">سریع‌ترین برد</div></div>
+    </div>
+    <div class="winrate-card">
+      <div class="winrate-ring" id="winrateRing" style="--pct:0">
+        <span id="winratePct">۰٪</span>
+      </div>
+      <div class="winrate-label">نرخِ بردِ کلی</div>
+    </div>
+    <div class="week-history">
+      <div class="week-history-title">🏆 تاریخچه‌ی رتبه‌ی هفتگی (فقط رویِ همین دستگاه)</div>
+      <div class="week-history-list" id="weekHistoryList"></div>
+    </div>
+    <div class="section-label-row">
+      <div class="section-label">🏅 دستاوردها</div>
+    </div>
+    <div class="badge-list" id="badgeList"></div>
+    <button class="secondary" id="openInviteFromProfileBtn">🤝 دعوت از دوستان</button>
+    <button class="primary" id="closeProfile2">بستن</button>
+  </div>
+</div>
+
+<div class="overlay" id="inviteOverlay">
+  <div class="panel">
+    <button class="close-x" id="closeInvite">✕</button>
+    <h2>🤝 دعوت از دوستان</h2>
+    <p>لینکِ اختصاصیِ خودتو بفرست؛ برای اولین دعوت <b>۲۰ سکه</b> می‌گیری و دوستت هم با ورود از لینکِ تو <b>۳۰ سکه</b> هدیه می‌گیره.</p>
+    <div class="invite-box">
+      <div class="invite-link-row">
+        <input type="text" id="inviteLinkInput" readonly>
+        <button class="invite-copy-btn" id="copyInviteBtn">کپی</button>
+      </div>
+      <button class="secondary invite-share-btn" id="shareInviteBtn">🔗 اشتراک‌گذاریِ لینکِ دعوت</button>
+      <div class="invite-count">تا الان <b id="inviteShareCount">۰</b> بار دعوت فرستادی</div>
+    </div>
+    <button class="primary" id="closeInvite2">بستن</button>
+  </div>
+</div>
+<div class="badge-pop" id="badgePop"></div>
+
+<div class="overlay" id="shopOverlay">
+  <div class="panel shop-panel">
+    <button class="close-x" id="closeShop">✕</button>
+    <h2>🛍 فروشگاه</h2>
+    <div class="shop-coin-row">🪙 <span id="shopCoinBal">۰</span> سکه</div>
+    <div class="shop-tabs">
+      <button class="shop-tab on" data-tab="tile">🎨 زمینِ تخته</button>
+      <button class="shop-tab" data-tab="avatar">🧑 آواتار</button>
+      <button class="shop-tab" data-tab="ring">✨ جلوهٔ دایره</button>
+      <button class="shop-tab" data-tab="wall">🪵 متریالِ دیوار</button>
+      <button class="shop-tab" data-tab="winfx">🎉 جلوهٔ برد</button>
+    </div>
+    <div class="shop-desc" id="shopDesc">رنگِ خانه‌های تخته رو عوض کن.</div>
+    <div class="shop-grid" id="shopGrid"></div>
+    <button class="secondary" id="closeShop2">بستن</button>
+  </div>
+</div>
+
+<div class="overlay" id="dailyOverlay">
+  <div class="panel">
+    <button class="close-x" id="closeDaily">✕</button>
+    <h2>🏆 چالشِ روزانه</h2>
+    <div class="daily-date" id="dailyDateLabel">—</div>
+    <div class="stat-grid">
+      <div class="stat-tile"><div class="num" id="dailyStreakEl">۰</div><div class="lbl">🔥 استریکِ روزها</div></div>
+      <div class="stat-tile"><div class="num" id="dailyBestEl">—</div><div class="lbl">بهترین زمان</div></div>
+    </div>
+    <div class="daily-week" id="dailyWeekEl"></div>
+    <div class="daily-status" id="dailyStatusMsg">امروز هنوز بازی نکردی</div>
+    <button class="primary" id="startDailyBtn">🎮 شروعِ چالشِ امروز</button>
+  </div>
+</div>
+
+<div class="overlay" id="puzzleOverlay">
+  <div class="panel">
+    <button class="close-x" id="closePuzzle">✕</button>
+    <h2>🧩 پازل‌های چیده‌شده</h2>
+    <p style="margin-top:-8px;">دیوارها از قبل چیده شده‌ن؛ با کمترین تعداد حرکت به نوارِ آخر برس و ستاره بگیر!</p>
+    <div class="puzzle-list" id="puzzleListEl"></div>
+    <button class="secondary" id="closePuzzle2">بستن</button>
+  </div>
+</div>
+
+<div class="overlay" id="onlineOverlay">
+  <div class="panel" id="onlinePanel">
+    <button class="close-x" id="closeOnline">✕</button>
+
+    <div id="onlineMenuView">
+      <h2>بازی آنلاین</h2>
+      <p>یه بازیِ سریع با یه حریفِ رندوم پیدا کن، یا با کدِ روم با دوستت بازی کن.</p>
+      <button class="primary" id="quickPlayBtn">🎲 بازیِ سریع</button>
+      <div class="online-menu-row">
+        <button class="secondary" id="createRoomBtn">ساخت روم جدید</button>
+        <button class="secondary" id="joinRoomBtn">ورود با کد روم</button>
+      </div>
+    </div>
+
+    <div id="onlineStakeView" class="hidden">
+      <h2>🎲 بازیِ سریع</h2>
+      <p>یه سطح انتخاب کن؛ سکه‌اش از موجودیت کم می‌شه و اگه بردی، کلِ پات (سکهٔ خودت + حریف) رو می‌بری.</p>
+      <div class="stake-coin-row">🪙 <span id="stakeCoinBal">۰</span> سکه</div>
+      <div class="stake-grid" id="stakeGrid"></div>
+      <button class="secondary" id="backFromStake">بازگشت</button>
+    </div>
+
+    <div id="onlineQuickView" class="hidden">
+      <h2>🎲 بازیِ سریع</h2>
+      <p>در حالِ پیدا کردنِ یه حریفِ آنلاین...</p>
+      <div class="status-line" id="quickStatus">در حال جستجو...</div>
+      <div class="spinner" id="quickSpinner"></div>
+      <div class="status-line" id="quickStakeLabel"></div>
+      <button class="secondary" id="backFromQuick">لغو</button>
+    </div>
+
+    <div id="onlineCreateView" class="hidden">
+      <h2>روم ساخته شد</h2>
+      <p>این کد رو به دوستت بده تا وارد بشه</p>
+      <div class="code-display" id="roomCodeDisplay">------</div>
+      <div class="status-line" id="createStatus">در حال آماده‌سازی...</div>
+      <div class="spinner" id="createSpinner"></div>
+      <button class="secondary" id="backFromCreate">بازگشت</button>
+    </div>
+
+    <div id="onlineJoinView" class="hidden">
+      <h2>ورود به روم</h2>
+      <p>کدِ ۶ رقمیِ روم رو وارد کن</p>
+      <input class="code-input" id="joinCodeInput" type="tel" inputmode="numeric" maxlength="6" placeholder="------">
+      <div class="status-line" id="joinStatus"></div>
+      <button class="primary" id="connectBtn">اتصال</button>
+      <button class="secondary" id="backFromJoin">بازگشت</button>
+    </div>
+  </div>
+</div>
+
+<div class="overlay" id="vsRevealOverlay">
+  <div class="vs-panel">
+    <div class="vs-top-row">
+      <div class="vs-title">بازی آنلاین</div>
+      <div class="vs-ping" id="vsPing">📶 <span id="vsPingVal">۴۸</span>ms</div>
+    </div>
+    <div class="vs-subtitle">مبارزه آنلاین</div>
+    <div class="vs-row">
+      <div class="vs-side vs-side-left">
+        <div class="avatar-circle dot vs-avatar" id="vsAvatar1"><span class="avatar-initial" id="vsInitial1">۱</span></div>
+        <div class="vs-name" id="vsName1">بازیکن ۱</div>
+        <div class="vs-tier" id="vsTier1">🌱 <span id="vsRating1">۱۰۰۰</span></div>
+      </div>
+      <div class="vs-mid">VS</div>
+      <div class="vs-side vs-side-right">
+        <div class="avatar-circle dot vs-avatar" id="vsAvatar2"><span class="avatar-initial" id="vsInitial2">۲</span></div>
+        <div class="vs-name" id="vsName2">بازیکن ۲</div>
+        <div class="vs-tier" id="vsTier2">🌱 <span id="vsRating2">۱۰۰۰</span></div>
+      </div>
+    </div>
+    <div class="vs-status" id="vsStatusLine">در حال آماده‌سازیِ بازی...</div>
+  </div>
+</div>
+
+<div class="overlay" id="tournamentOverlay">
+  <div class="panel" id="tournamentPanel">
+    <button class="close-x" id="closeTournament">✕</button>
+
+    <div id="tMenuView">
+      <h2>🏆 تورنومنتِ ۴ نفره</h2>
+      <p>یه تورنومنتِ حذفیِ ۴ نفره بساز و کد رو به ۳ تا دوستت بده، یا با کدِ دوستت وارد شو.</p>
+      <div class="online-menu-row">
+        <button class="primary" id="tCreateBtn">ساختِ تورنومنت</button>
+        <button class="secondary" id="tJoinBtn">ورود با کد</button>
+      </div>
+    </div>
+
+    <div id="tCreateView" class="hidden">
+      <h2>تورنومنت ساخته شد</h2>
+      <p>این کد رو به ۳ تا دوستت بده تا وارد بشن</p>
+      <div class="code-display" id="tCodeDisplay">------</div>
+      <div class="t-slot-list" id="tSlotList"></div>
+      <div class="status-line" id="tCreateStatus">در حال آماده‌سازی...</div>
+      <button class="primary hidden" id="tStartBtn">🎮 شروعِ تورنومنت</button>
+      <button class="secondary" id="tBackFromCreate">بازگشت</button>
+    </div>
+
+    <div id="tJoinCodeView" class="hidden">
+      <h2>ورود به تورنومنت</h2>
+      <p>کدِ ۶ رقمیِ تورنومنت رو وارد کن</p>
+      <input class="code-input" id="tJoinCodeInput" type="tel" inputmode="numeric" maxlength="6" placeholder="------">
+      <div class="status-line" id="tJoinStatus"></div>
+      <button class="primary" id="tConnectBtn">اتصال</button>
+      <button class="secondary" id="tBackFromJoin">بازگشت</button>
+    </div>
+
+    <div id="tLobbyView" class="hidden">
+      <h2>در انتظارِ شروع...</h2>
+      <p>میزبان به‌زودی تورنومنت رو شروع می‌کنه</p>
+      <div class="t-slot-list" id="tLobbySlotList"></div>
+      <div class="status-line" id="tLobbyStatus">در انتظارِ بازیکنای دیگه...</div>
+      <button class="secondary" id="tLeaveLobbyBtn">خروج از تورنومنت</button>
+    </div>
+  </div>
+</div>
+
+<div class="overlay" id="tBracketOverlay">
+  <div class="panel">
+    <button class="close-x" id="closeTBracket">✕</button>
+    <h2>🏆 برکتِ تورنومنت</h2>
+    <div class="bracket-list" id="tBracketList"></div>
+    <button class="primary" id="closeTBracket2">بستن</button>
+  </div>
+</div>
+
+<div class="overlay" id="tChampionOverlay">
+  <div class="panel">
+    <div class="win-dot" id="tChampionDot"></div>
+    <h2 id="tChampionTitle">🏆 قهرمانِ تورنومنت</h2>
+    <p id="tChampionSubtitle">تبریک!</p>
+    <div class="bracket-list" id="tChampionBracketList"></div>
+    <button class="primary" id="tChampionHomeBtn">بازگشت به خانه</button>
+  </div>
+</div>
+
+<div class="sound-panel" id="soundPanel">
+  <div class="sound-panel-row">
+    <span>🔊 تنظیمِ صدا</span>
+    <button class="sound-mute-btn" id="muteAllBtn">صدا: روشن</button>
+  </div>
+  <label class="sound-slider-label">افکت‌ها
+    <input type="range" id="sfxVolumeSlider" min="0" max="100" value="85">
+  </label>
+  <label class="sound-slider-label">موسیقیِ منو
+    <input type="range" id="musicVolumeSlider" min="0" max="100" value="50">
+  </label>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>
