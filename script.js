@@ -34,7 +34,9 @@
   const ROOM_PREFIX = "mesir-azad-";
   const MM_PREFIX = "mesir-azad-mm-";
   const MM_SLOTS = 30;
-  const MM_CONNECT_TIMEOUT = 2800;
+  const MM_CONNECT_TIMEOUT = 4000;
+  const MM_CLAIM_TIMEOUT = 8000; // the public PeerJS broker can be slow/flaky — don't wait on it forever
+  const MM_TOTAL_TIMEOUT = 60000; // hard ceiling: after this, stop retrying and show a real error instead of spinning forever
   const MM_BATCH_SIZE = 3; // slots probed in parallel per scan round (was 1 — serial)
   const STAKE_TIERS = [
     {amount:25,  name:'مبتدی'},
@@ -1008,6 +1010,7 @@
   let mmSlotOrder = [];
   let mmAttemptIdx = -1;
   let mmBatchPeers = []; // Peer objects currently being probed in the active batch
+  let mmStartedAt = 0;
   let myRole = null;     // 0 = host/creator, 1 = joiner
   let oppRating = 1000;  // opponent's online rank rating, synced at match start
 
@@ -2483,6 +2486,7 @@
   function beginQuickPlay(){
     mmCancelled = false;
     quickPlayMode = true;
+    mmStartedAt = Date.now();
     showOnlineView('quick');
     quickStatus.textContent = 'در حال جستجوی حریف...';
     quickStatus.className = 'status-line';
@@ -2514,6 +2518,16 @@
   }
   function scanNextSlot(){
     if(mmCancelled) return;
+    if(Date.now() - mmStartedAt > MM_TOTAL_TIMEOUT){
+      quickStatus.textContent = 'اتصال به سرورِ آنلاین برقرار نشد. اینترنتت رو چک کن یا چند لحظه‌ی دیگه دوباره امتحان کن.';
+      quickStatus.className = 'status-line err';
+      quickSpinner.classList.add('hidden');
+      destroyBatchPeers(null);
+      if(peer){ try{ peer.destroy(); }catch(e){} peer = null; }
+      quickPlayMode = false;
+      refundStakeIfUnmatched();
+      return;
+    }
     if(mmAttemptIdx >= mmSlotOrder.length-1){
       // scanned every slot as a client and nobody was waiting anywhere —
       // become the host on a random slot ourselves and wait for the next
@@ -2573,9 +2587,16 @@
     if(peer){ try{ peer.destroy(); }catch(e){} }
     peer = new Peer(slotId, PEER_OPTS);
     let claimed = false;
+    const claimTimeout = setTimeout(()=>{
+      if(claimed || mmCancelled) return;
+      try{ peer.destroy(); }catch(e){}
+      peer = null;
+      scanNextSlot();
+    }, MM_CLAIM_TIMEOUT);
     peer.on('open', ()=>{
       if(mmCancelled){ try{ peer.destroy(); }catch(e){} return; }
       claimed = true;
+      clearTimeout(claimTimeout);
       quickStatus.textContent = 'منتظرِ یه حریفِ دیگه...';
       peer.on('connection', (c)=>{
         if(mmCancelled) return;
@@ -2587,6 +2608,7 @@
     });
     peer.on('error', ()=>{
       if(claimed) return;
+      clearTimeout(claimTimeout);
       if(peer){ try{ peer.destroy(); }catch(e){} peer = null; }
       if(!mmCancelled) scanNextSlot();
     });
